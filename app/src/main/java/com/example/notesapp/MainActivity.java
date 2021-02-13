@@ -1,70 +1,46 @@
 package com.example.notesapp;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) { // linking menu with menu inflater
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main_menu, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) { //what to do when someone selects the items
-        super.onOptionsItemSelected(item);
-        switch(item.getItemId()){
-            case R.id.settings:
-                Log.i("Item selected", "Settings");
-                return true;
-            case R.id.help:
-                Log.i("Item selected", "Help");
-                return true;
-            default:
-                return false;
-        }
-    }
+    static ArrayList<String> notes = new ArrayList<>();
+    static ArrayAdapter arrayAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        SharedPreferences sharedPreferences = this.getSharedPreferences("com.example.notesapp", Context.MODE_PRIVATE);
-//        ArrayList<String> friends = new ArrayList<>();
-//        friends.add("Nick");
-//        friends.add("Jones");
-//        friends.add("Angela");
-//        try {
-//            sharedPreferences.edit().putString("friends", ObjectSerializer.serialize(friends)).apply();
-//            Log.i("Serialized String", sharedPreferences.getString("friends","")); //doing serialization
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        ArrayList<String> newFriends = new ArrayList<>();
-//        try {
-//            newFriends = (ArrayList<String>) ObjectSerializer.deserialize(sharedPreferences.getString("friends", ObjectSerializer.serialize(new ArrayList<String>())));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        Log.i("New Friends", newFriends.toString()); //deserialization process
+        ListView listView = findViewById(R.id.listView); // creating a list view
+        notes.add("Example Note");
+        ArrayAdapter arrayAdapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, notes); // creating a layout view adapter and passing the array
+        listView.setAdapter(arrayAdapter); //linking the list view with our adapter
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() { // setting when an item is clicked
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), NoteEditActivity.class); // we create an intent and call nodeEdit activity
+                intent.putExtra("noteId", position); // we pass the noteId to the position
+                startActivity(intent); //starting the activity when a item is clicked
 
-//        sharedPreferences.edit().putString("username", "siddhant").apply();
-//        String username  = sharedPreferences.getString("username", "");
-//        Log.i("Value", username);
+            }
+        });
     }
 }
